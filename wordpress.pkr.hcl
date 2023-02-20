@@ -12,7 +12,7 @@ locals {
 }
 
 source "amazon-ebs" "wordpress" {
-  ami_name = "wordpress-website-${local.timestamp}"
+  ami_name = "reggies-wordpress-website-${local.timestamp}"
 
   source_ami_filter {
     filters = {
