@@ -20,6 +20,25 @@
         - unzip
         - nano
 
+    - name: Download Inspector Agent
+      get_url:
+        url: https://d1wk0tztpsntt1.cloudfront.net/linux/latest/install
+        dest: /tmp/install
+        mode: '0755'
+    
+    - name: Install Inspector Agent
+      command: bash /tmp/install
+
+    - name: Download CloudWatch Agent
+      get_url:
+        url: https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+        dest: /tmp/amazon-cloudwatch-agent.deb
+
+    - name: Install CloudWatch Agent
+      apt:
+        deb: /tmp/amazon-cloudwatch-agent.deb
+        state: present
+
     - name: Download latest version of Wordpress from site and unzip file
       ansible.builtin.shell: cd /var/www/ && sudo wget https://wordpress.org/latest.zip && sudo unzip latest.zip
 
@@ -28,16 +47,15 @@
         src: "wp-config.php.tpl"
         dest: "/var/www/wordpress/wp-config.php"
 
-
     - name: Edit 000-default.conf file to update default path
       template:
         src: "000-default.conf.tpl"
         dest: "/etc/apache2/sites-enabled/000-default.conf"
 
-    - name: Restart apache service.
+    - name: Restart apache service
       systemd:
-       name: apache2
-       state: restarted
-    
+        name: apache2
+        state: restarted
+
     - name: Update permissions
       ansible.builtin.shell: sudo chown -R www-data:www-data /var/www/wordpress
